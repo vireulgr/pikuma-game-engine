@@ -6,7 +6,8 @@ param([switch]$configure)
 # SDL2_mixer-2.5.2  with dynamic linking
 # SDL2_ttf-2.0.15   with dynamic linking
 # sol2 ver. 3.2+
-# glm (see libs folder)
+# glm 0.9.9.4 (https://glm.g-truc.net)
+# imgui 1.79 (https://github.com/ocornut/imgui)
 
 if ($configure) {
   cmake -S . -B ./build -G "Ninja" -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_MAKE_PROGRAM="E:\Portable\Ninja\ninja.exe"
