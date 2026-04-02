@@ -10,8 +10,8 @@ param([switch]$configure)
 # imgui 1.79 (https://github.com/ocornut/imgui)
 
 if ($configure) {
+  New-Item -ItemType Directory -Name 'build' -Force
   cmake -S . -B ./build -G "Ninja" -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_MAKE_PROGRAM="E:\Portable\Ninja\ninja.exe"
-  Copy-Item ./build/compile_commands.json ./
 }
 else {
   cmake --build ./build
@@ -19,4 +19,9 @@ else {
   Copy-Item E:\code\Thirdparty\SDL2_image-2.5.3\lib\x64\SDL2_image.dll .\build\ -ErrorAction SilentlyContinue
   Copy-Item E:\code\Thirdparty\SDL2_mixer-2.5.2\lib\x64\SDL2_mixer.dll .\build\ -ErrorAction SilentlyContinue
   Copy-Item E:\code\Thirdparty\SDL2_ttf-2.0.15\lib\x64\SDL2_ttf.dll .\build\ -ErrorAction SilentlyContinue
+}
+
+$isCompileCommandsOld = $(Get-Item ./build/compile_commands.json).LastWriteTime -gt $(Get-Item ./compile_commands.json).LastWriteTime
+if (-not $(Test-Path ./compile_commands.json) -or $isCompileCommandsOld) {
+  Copy-Item ./build/compile_commands.json ./
 }

@@ -6,20 +6,34 @@ add_executable(engine)
 
 target_sources(engine PRIVATE
   src/main.cpp
+  src/game.cpp
 )
 
 target_compile_options(engine PRIVATE -Wall -Wextra)
 target_compile_features(engine PRIVATE cxx_std_17)
 
-
 if (WIN32)
-  set(SDL2_CORE_HOME "E:/code/Thirdparty/SDL2-2.0.14")
-  set(SDL2_IMAGE_HOME "E:/code/Thirdparty/SDL2_image-2.5.3")
-  set(SDL2_MIXER_HOME "E:/code/Thirdparty/SDL2_mixer-2.5.2")
-  set(SDL2_TTF_HOME "E:/code/Thirdparty/SDL2_ttf-2.0.15")
+  execute_process(
+    COMMAND pwsh.exe -File "${CMAKE_CURRENT_SOURCE_DIR}/get-env.ps1"
+    OUTPUT_VARIABLE ENV_SCRIPT_STDOUT
+    ERROR_VARIABLE ENV_SCRIPT_STDERROR
+    RESULT_VARIABLE ENV_SCRIPT_RESULT
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+
+  if (ENV_SCRIPT_RESULT EQUAL 0)
+    message(STATUS "Env script finished successfully")
+    string(JSON SDL2_CORE_HOME GET "${ENV_SCRIPT_STDOUT}" "Sdl2CoreHome")
+    string(JSON SDL2_IMAGE_HOME GET "${ENV_SCRIPT_STDOUT}" "Sdl2ImageHome")
+    string(JSON SDL2_MIXER_HOME  GET "${ENV_SCRIPT_STDOUT}" "Sdl2MixerHome")
+    string(JSON SDL2_TTF_HOME GET "${ENV_SCRIPT_STDOUT}" "Sdl2TtfHome")
+    string(JSON MY_THIRDPARTY_LIBS_REL_X64  GET "${ENV_SCRIPT_STDOUT}" "LibsReleaseX64") # for lua53.lib
+    string(JSON MY_THIRDPARTY_INCLUDE GET "${ENV_SCRIPT_STDOUT}" "Include") # for lua headers (used by sol)
+  else()
+    message(FATAL_ERROR "Cannot determine libraries location ${ENV_SCRIPT_STDERROR}")
+  endif()
+
   #set(LUA_HOME "E:/code/Thirdparty/lua-5.3.5_win64_vc16_lib")
-  set(MY_THIRDPARTY_LIBS_REL_X64 "E:/code/Thirdparty/Libs/Release_x64")
-  set(MY_THIRDPARTY_INCLUDES "E:/code/Thirdparty/Include")
   #set(MY_THIRDPARTY_LIBS_DEB_X64 "E:/code/Thirdparty/Libs/Debug_x64")
 
   target_link_libraries(engine PRIVATE
@@ -35,10 +49,9 @@ if (WIN32)
     "${SDL2_IMAGE_HOME}/include"
     "${SDL2_MIXER_HOME}/include"
     "${SDL2_TTF_HOME}/include"
-    "${MY_THIRDPARTY_INCLUDES}"
+    "${MY_THIRDPARTY_INCLUDE}"
     "libs/"
   )
 elseif (UNIX)
+  message(FATAL_ERROR "Unix platforms are not supported, sorry")
 endif()
-
-
