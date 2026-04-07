@@ -18,25 +18,31 @@ void Game::initialize() {
     std::cerr << "error initializing SDL" << std::endl;
     return;
   }
-  int width = 800;
-  int height = 600;
+  // SDL_DisplayMode displayMode;
+  // SDL_GetCurrentDisplayMode(0, &displayMode);
+  // int width = displayMode.w; //800;
+  // int height = displayMode.h; //600;
+  int resWidth = 800;
+  int resHeight = 600;
   m_window = SDL_CreateWindow(
       NULL,
       SDL_WINDOWPOS_CENTERED,
       SDL_WINDOWPOS_CENTERED,
-      width,
-      height,
+      resWidth,
+      resHeight,
       SDL_WINDOW_BORDERLESS);
 
   if (!m_window) {
     std::cerr << "error creating window" << std::endl;
     return;
   }
-  m_renderer = SDL_CreateRenderer(m_window, -1, 0);
+  m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   if (!m_window) {
     std::cerr << "error creating renderer" << std::endl;
     return;
   }
+
+  SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
 }
 
 void Game::run() {
