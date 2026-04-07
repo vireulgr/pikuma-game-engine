@@ -1,7 +1,7 @@
 #include "game.hpp"
 
 int main(int argc, char * argv []) {
-  Game game;
+  Game game(argc, argv);
   game.initialize();
   game.run();
   game.dispose();
