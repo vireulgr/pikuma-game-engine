@@ -1,7 +1,7 @@
 #include "game.hpp"
 #include <iostream>
 #include "SDL.h"
-#include "SDL_image.h"
+#include "resources/resource.hpp"
 
 Game::Game(int argc, char * argv[]) {
   if (argc >= 1) {
@@ -13,8 +13,7 @@ Game::Game(int argc, char * argv[]) {
   windowHeight = 600;
 }
 
-Game::~Game() {
-}
+Game::~Game() {}
 
 bool Game::initialize() {
 
@@ -48,14 +47,25 @@ bool Game::initialize() {
     return false;
   }
 
-  SDL_Surface * tmpSurface = IMG_Load("./assets/images/tank-tiger-right.png");
-  if (NULL == tmpSurface) {
-    std::cerr << "error loading tank texture" << std::endl;
-    std::cerr << SDL_GetError() << std::endl;
-    return false;
-  }
-  tigerTankTxt = SDL_CreateTextureFromSurface(m_renderer, tmpSurface);
-  SDL_FreeSurface(tmpSurface);
+  ImageResource * tankImage = new ImageResource("./assets/images/tank-tiger-right.png");
+  if (tankImage == nullptr) {
+    std::cerr << "tank image is null" << std::endl;
+    return false; //
+  } //
+  if (!tankImage->load()) {
+    return false; //
+  } //
+  tigerTankTxt = tankImage->getTexture(m_renderer);
+  delete tankImage;
+
+  //SDL_Surface * tmpSurface = IMG_Load("./assets/images/tank-tiger-right.png");
+  //if (NULL == tmpSurface) {
+  //  std::cerr << "error loading tank texture" << std::endl;
+  //  std::cerr << SDL_GetError() << std::endl;
+  //  return false;
+  //}
+  //tigerTankTxt = SDL_CreateTextureFromSurface(m_renderer, tmpSurface);
+  //SDL_FreeSurface(tmpSurface);
 
   if (NULL == tigerTankTxt) {
     std::cerr << "error loading tank texture" << std::endl;
@@ -99,8 +109,7 @@ void Game::processEvents() {
   }
 }
 
-void Game::update() {
-}
+void Game::update() { }
 
 void Game::render() {
   SDL_SetRenderDrawColor(m_renderer, 31, 31, 31, 255);
