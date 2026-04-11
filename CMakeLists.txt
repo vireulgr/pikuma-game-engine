@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.30)
 
-project(2dgameengine)
+project(2dgameengine VERSION 0.0.1)
 
 add_executable(engine)
 
 target_sources(engine PRIVATE
   src/main.cpp
   src/game.cpp
+  src/resources/resource.cpp
 )
 
 target_compile_options(engine PRIVATE -Wall -Wextra)
