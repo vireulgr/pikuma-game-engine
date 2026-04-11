@@ -13,3 +13,21 @@ Depends on
 - [imgui](https://github.com/ocornut/imgui) 1.79 header only
 
 Project configured to build with cmake 3.30+, ninja-build and clang 2.20 on Windows &trade;
+
+## Possible issue
+[SDL_endian.h error: definition of builtin function _m_prefetch](https://github.com/libsdl-org/SDL/issues/13952)
+```
+diff --git a/include/SDL2/SDL_endian.h b/include/SDL2/SDL_endian.h
+index 41ad0ce..f3ab18f 100644
+--- a/include/SDL3/SDL_endian.h
++++ b/include/SDL3/SDL_endian.h
+@@ -46,7 +46,7 @@
+ #if defined(_MSC_VER) && (_MSC_VER >= 1400)
+  /* As of Clang 11, '_m_prefetchw' is conflicting with the winnt.h's version,
+      so we define the needed '_m_prefetch' here as a pseudo-header, until the issue is fixed. */
+-#ifdef __clang__
++#if defined(__clang__) &&  !_SDL_HAS_BUILTIN(_m_prefetch)
+  #ifndef __PRFCHWINTRIN_H
+   #define __PRFCHWINTRIN_H
+    static __inline__ void __attribute__((__always_inline__, __nodebug__))
+```
