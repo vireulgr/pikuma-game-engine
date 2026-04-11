@@ -27,18 +27,11 @@ if (WIN32)
     string(JSON SDL2_IMAGE_HOME GET "${ENV_SCRIPT_STDOUT}" "Sdl2" "Image")
     string(JSON SDL2_MIXER_HOME  GET "${ENV_SCRIPT_STDOUT}" "Sdl2" "Mixer")
     string(JSON SDL2_TTF_HOME GET "${ENV_SCRIPT_STDOUT}" "Sdl2" "Ttf")
-    ## string(JSON SDL2_CORE_HOME GET "${ENV_SCRIPT_STDOUT}" "Sdl2CoreHome")
-    ## string(JSON SDL2_IMAGE_HOME GET "${ENV_SCRIPT_STDOUT}" "Sdl2ImageHome")
-    ## string(JSON SDL2_MIXER_HOME  GET "${ENV_SCRIPT_STDOUT}" "Sdl2MixerHome")
-    ## string(JSON SDL2_TTF_HOME GET "${ENV_SCRIPT_STDOUT}" "Sdl2TtfHome")
     string(JSON MY_THIRDPARTY_LIBS_REL_X64  GET "${ENV_SCRIPT_STDOUT}" "LibsReleaseX64") # for lua53.lib
     string(JSON MY_THIRDPARTY_INCLUDE GET "${ENV_SCRIPT_STDOUT}" "Include") # for lua headers (used by sol)
   else()
     message(FATAL_ERROR "Cannot determine libraries location ${ENV_SCRIPT_STDERROR}")
   endif()
-
-  #set(LUA_HOME "E:/code/Thirdparty/lua-5.3.5_win64_vc16_lib")
-  #set(MY_THIRDPARTY_LIBS_DEB_X64 "E:/code/Thirdparty/Libs/Debug_x64")
 
   target_link_libraries(engine PRIVATE
     "${SDL2_CORE_HOME}/lib/x64/SDL2.lib"
