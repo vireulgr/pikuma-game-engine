@@ -3,16 +3,23 @@
 
 struct SDL_Window;
 struct SDL_Renderer;
+struct SDL_Texture;
 
 class Game {
 public:
   Game(int argc, char * argv[]);
   ~Game();
-  void initialize();
+  bool initialize();
   void run();
   void dispose();
 
+  int windowWidth;
+  int windowHeight;
+
+  SDL_Texture * tigerTankTxt;
+
 protected:
+  bool fakeFullscreen;
   int color;
   bool isRunning;
   SDL_Window * m_window;

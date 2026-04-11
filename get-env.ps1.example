@@ -1,8 +1,9 @@
-$ThirdpartyDir = "E:/code/Thirdparty"
+$ThirdpartyDir = 'G:/prog_n_gamedev/Thirdparty'
 $SystemEnv = @{
+  NinjaBuildPath = 'G:/portable_soft/ninja-build_1.13.2/ninja.exe';
   Sdl2 = @{
-    Core = "$ThirdpartyDir/SDL2-2.0.14";
-    Image = "$ThirdpartyDir/SDL2_image-2.5.3";
+    Core = "$ThirdpartyDir/SDL2-2.0.22";
+    Image = "$ThirdpartyDir/SDL2_image-2.8.10";
     Mixer = "$ThirdpartyDir/SDL2_mixer-2.5.2";
     Ttf = "$ThirdpartyDir/SDL2_ttf-2.0.15";
   };
@@ -14,4 +15,5 @@ $SystemEnv = @{
 
 $output = ConvertTo-Json $SystemEnv
 
-Write-Host $output
+# Write-Host $output
+return $output
