@@ -29,15 +29,4 @@ protected:
   ResourceType m_type;
 };
 
-struct ImageResource : public ResourceBase {
-protected:
-  SDL_Surface * m_surface;
-public:
-  explicit ImageResource(std::string path);
-  virtual ~ImageResource() override;
-  virtual bool load() override;
-  virtual void dispose() override;
-
-  SDL_Texture * getTexture(SDL_Renderer* renderer);
-};
 #endif
