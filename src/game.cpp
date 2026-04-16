@@ -1,7 +1,7 @@
 #include "game.hpp"
 #include <iostream>
 #include "SDL.h"
-#include "resources/resource.hpp"
+#include "resources/image-resource.hpp"
 
 Game::Game(int argc, char * argv[]) {
   if (argc >= 1) {
@@ -50,25 +50,16 @@ bool Game::initialize() {
   ImageResource * tankImage = new ImageResource("./assets/images/tank-tiger-right.png");
   if (tankImage == nullptr) {
     std::cerr << "tank image is null" << std::endl;
-    return false; //
-  } //
+    return false;
+  }
   if (!tankImage->load()) {
-    return false; //
-  } //
+    return false;
+  }
   tigerTankTxt = tankImage->getTexture(m_renderer);
   delete tankImage;
 
-  //SDL_Surface * tmpSurface = IMG_Load("./assets/images/tank-tiger-right.png");
-  //if (NULL == tmpSurface) {
-  //  std::cerr << "error loading tank texture" << std::endl;
-  //  std::cerr << SDL_GetError() << std::endl;
-  //  return false;
-  //}
-  //tigerTankTxt = SDL_CreateTextureFromSurface(m_renderer, tmpSurface);
-  //SDL_FreeSurface(tmpSurface);
-
   if (NULL == tigerTankTxt) {
-    std::cerr << "error loading tank texture" << std::endl;
+    std::cerr << "Error loading tank texture" << std::endl;
     std::cerr << SDL_GetError() << std::endl;
     return false;
   }
@@ -115,9 +106,9 @@ void Game::render() {
   SDL_SetRenderDrawColor(m_renderer, 31, 31, 31, 255);
   SDL_RenderClear(m_renderer);
 
-  SDL_SetRenderDrawColor(m_renderer, 31, 250, 250, 255);
-  SDL_Rect rect = { 380, 280, 40, 40};
-  SDL_RenderFillRect(m_renderer, &rect);
+  //SDL_SetRenderDrawColor(m_renderer, 31, 250, 250, 255);
+  //SDL_Rect rect = { 380, 280, 40, 40};
+  //SDL_RenderFillRect(m_renderer, &rect);
 
 
   SDL_Rect destRect = { 20, 20, 32, 32 };
