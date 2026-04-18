@@ -3,11 +3,11 @@
 Based on course from pikuma.com
 
 Depends on 
-- lua 5.3.5         static lib bulid with msvc 15 x64
+- lua 5.3.5   [5.4.8](https://sourceforge.net/projects/luabinaries/files/5.4.8/Windows%20Libraries/Dynamic/lua-5.4.8_Win64_dllw6_lib.zip/download)   static lib bulid with msvc 15 x64
 - [SDL2 2.0.22](https://github.com/libsdl-org/SDL/releases/download/release-2.0.22/SDL2-devel-2.0.22-VC.zip)
 - [SDL2_image 2.8.10](https://github.com/libsdl-org/SDL_image/releases/download/release-2.8.10/SDL2_image-devel-2.8.10-VC.zip)
-- SDL2_mixer 2.5.2  dynamic lib
-- SDL2_ttf 2.0.15   dynamic lib
+- [SDL2_mixer 2.6.0](https://github.com/libsdl-org/SDL_mixer/releases/download/release-2.6.0/SDL2_mixer-devel-2.6.0-VC.zip)
+- [SDL2_ttf 2.0.15](https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.0.15/SDL2_ttf-devel-2.0.15-VC.zip)
 - [sol2](https://github.com/ThePhD/sol2) 3.2.1 header only
 - [glm](https://glm.g-truc.net) 0.9.9.4 header only
 - [imgui](https://github.com/ocornut/imgui) 1.79 header only

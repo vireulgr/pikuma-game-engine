@@ -4,7 +4,7 @@ $SystemEnv = @{
   Sdl2 = @{
     Core = "$ThirdpartyDir/SDL2-2.0.22";
     Image = "$ThirdpartyDir/SDL2_image-2.8.10";
-    Mixer = "$ThirdpartyDir/SDL2_mixer-2.5.2";
+    Mixer = "$ThirdpartyDir/SDL2_mixer-2.6.0";
     Ttf = "$ThirdpartyDir/SDL2_ttf-2.0.15";
   };
   #set(LUA_HOME "E:/code/Thirdparty/lua-5.3.5_win64_vc16_lib")

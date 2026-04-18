@@ -8,6 +8,11 @@ target_sources(engine PRIVATE
   src/main.cpp
   src/game.cpp
   src/resources/resource.cpp
+  src/resources/sound-resource.cpp
+  src/resources/image-resource.cpp
+  src/resources/font-resource.cpp
+  src/resources/resource-manager.cpp
+  src/objects/simple-object.cpp
 )
 
 target_compile_options(engine PRIVATE -Wall -Wextra)
@@ -28,8 +33,10 @@ if (WIN32)
     string(JSON SDL2_IMAGE_HOME GET "${ENV_SCRIPT_STDOUT}" "Sdl2" "Image")
     string(JSON SDL2_MIXER_HOME  GET "${ENV_SCRIPT_STDOUT}" "Sdl2" "Mixer")
     string(JSON SDL2_TTF_HOME GET "${ENV_SCRIPT_STDOUT}" "Sdl2" "Ttf")
-    string(JSON MY_THIRDPARTY_LIBS_REL_X64  GET "${ENV_SCRIPT_STDOUT}" "LibsReleaseX64") # for lua53.lib
+    string(JSON MY_THIRDPARTY_LIBS_REL_X64  GET "${ENV_SCRIPT_STDOUT}" "LibsReleaseX64") # for lua static lib
+    string(JSON MY_THIRDPARTY_LIBS_DEB_X64  GET "${ENV_SCRIPT_STDOUT}" "LibsDebugX64") # for lua static.lib
     string(JSON MY_THIRDPARTY_INCLUDE GET "${ENV_SCRIPT_STDOUT}" "Include") # for lua headers (used by sol)
+    # string(JSON LUA_INCLUDE GET "${ENV_SCRIPT_STDOUT}" "Lua" "include") # for lua headers (used by sol)
   else()
     message(FATAL_ERROR "Cannot determine libraries location ${ENV_SCRIPT_STDERROR}")
   endif()
@@ -40,7 +47,8 @@ if (WIN32)
     "${SDL2_IMAGE_HOME}/lib/x64/SDL2_image.lib"
     "${SDL2_MIXER_HOME}/lib/x64/SDL2_mixer.lib"
     "${SDL2_TTF_HOME}/lib/x64/SDL2_ttf.lib"
-    "${MY_THIRDPARTY_LIBS_REL_X64}/lua53.lib"
+    #"${MY_THIRDPARTY_LIBS_DEB_X64}/lua53.lib"
+    "${MY_THIRDPARTY_LIBS_DEB_X64}/lua-5.4.4.lib"
   )
   target_include_directories(engine PRIVATE 
     "${SDL2_CORE_HOME}/include"
