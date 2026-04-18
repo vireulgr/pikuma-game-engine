@@ -8,14 +8,48 @@ param([switch]$configure, [switch]$clean, [switch]$run)
 # sol2 ver. 3.2+
 # glm 0.9.9.4 (https://glm.g-truc.net)
 # imgui 1.79 (https://github.com/ocornut/imgui)
+################################################################################
+## CLEAN
+################################################################################
+if ($clean) {
+  Remove-Item -recurse -force ./build -ErrorAction SilentlyContinue
+  Remove-Item ./build_commands.json -ErrorAction SilentlyContinue
+  Exit 0
+}
 
 if (-not $(Test-Path ./get-env.ps1)) {
   Write-Error 'env script "get-env.ps1" not found'
-  return;
+  Exit -1
 }
 
 $sysEnv = ConvertFrom-Json $(.\get-env.ps1)
 
+$dllsToCopy = @(
+  "$($sysEnv.Sdl2.Core)\lib\x64\SDL2.dll",
+  "$($sysEnv.Sdl2.Image)\lib\x64\SDL2_image.dll",
+  "$($sysEnv.Sdl2.Mixer)\lib\x64\SDL2_mixer.dll",
+  "$($sysEnv.Sdl2.Ttf)\lib\x64\SDL2_ttf.dll",
+  "$($sysEnv.Sdl2.Ttf)\lib\x64\SDL2_ttf.dll",
+  "$($sysEnv.Sdl2.Ttf)\lib\x64\libfreetype-6.dll",
+  "$($sysEnv.Sdl2.Ttf)\lib\x64\zlib1.dll"
+)
+
+if ($sysEnv.Lua.Keys -Contains 'dllPath') {
+  $dllsToCopy = $dllsToCopy + "$($sysEnv.Lua.dllPath)"
+}
+
+################################################################################
+## RUN
+################################################################################
+if ($run) {
+  Copy-Item -Path $dllsToCopy .\build\ -ErrorAction SilentlyContinue
+  ./build/engine.exe
+  Exit 0
+}
+
+################################################################################
+## CONFIGURE
+################################################################################
 if ($configure) {
   $cmakeCall = @('cmake', '-S', '.', '-B', './build', '-G', 'Ninja', 
             '-DCMAKE_EXPORT_COMPILE_COMMANDS=1', 
@@ -26,34 +60,26 @@ if ($configure) {
   New-Item -ItemType Directory -Name 'build' -Force | Out-Null
   Invoke-Expression $($cmakeCall -join ' ')
 }
-elseif ($clean) {
-  Remove-Item -recurse -force ./build -ErrorAction SilentlyContinue
-  Remove-Item ./build_commands.json -ErrorAction SilentlyContinue
-}
-elseif ($run) {
-  Copy-Item "$($sysEnv.Sdl2.Core)\lib\x64\SDL2.dll" .\build\ -ErrorAction SilentlyContinue
-  Copy-Item "$($sysEnv.Sdl2.Image)\lib\x64\SDL2_image.dll" .\build\ -ErrorAction SilentlyContinue
-  Copy-Item "$($sysEnv.Sdl2.Mixer)\lib\x64\SDL2_mixer.dll" .\build\ -ErrorAction SilentlyContinue
-  Copy-Item "$($sysEnv.Sdl2.Ttf)\lib\x64\SDL2_ttf.dll" .\build\ -ErrorAction SilentlyContinue
-  Copy-Item "$($sysEnv.Sdl2.Ttf)\lib\x64\SDL2_ttf.dll" .\build\ -ErrorAction SilentlyContinue
-  Copy-Item "$($sysEnv.BinsDebugX64)\lua-5.4.4.dll" .\build\ -ErrorAction SilentlyContinue # ?????
-  ./build/engine.exe
-}
+################################################################################
+## BUILD
+################################################################################
 else {
-  if (-not $(Test-Path ./build)) {
+  if (-not $(Test-Path .\build)) {
     Write-Error 'Build directory not exists. Run "./build.ps1 -configure" first'
-    return;
+    Exit -2
   }
   cmake --build ./build
-  Copy-Item "$($sysEnv.Sdl2.Core)\lib\x64\SDL2.dll" .\build\ -ErrorAction SilentlyContinue
-  Copy-Item "$($sysEnv.Sdl2.Image)\lib\x64\SDL2_image.dll" .\build\ -ErrorAction SilentlyContinue
-  Copy-Item "$($sysEnv.Sdl2.Mixer)\lib\x64\SDL2_mixer.dll" .\build\ -ErrorAction SilentlyContinue
-  Copy-Item "$($sysEnv.Sdl2.Ttf)\lib\x64\SDL2_ttf.dll" .\build\ -ErrorAction SilentlyContinue
-  Copy-Item "$($sysEnv.BinsDebugX64)\lua-5.4.4.dll" .\build\ -ErrorAction SilentlyContinue # ?????
+  if ($?) {
+    Copy-Item -Path $dllsToCopy .\build\ -ErrorAction SilentlyContinue
+  }
+  else {
+    Write-Error 'Build failed'
+    Exit -5
+  }
 }
 
-if (-not $(Test-path ./build/compile_commands.json)) {
-  return;
+if (-not $(Test-Path ./build/compile_commands.json)) {
+  Exit 0
 }
 
 if (-not $(Test-Path ./compile_commands.json) `

@@ -1,13 +1,16 @@
 $ThirdpartyDir = 'G:/prog_n_gamedev/Thirdparty'
 $SystemEnv = @{
   NinjaBuildPath = 'G:/portable_soft/ninja-build_1.13.2/ninja.exe';
+  Lua = @{
+    include = "$ThirdpartyDir/lua_5.3.6/include"
+    libPath = "$ThirdpartyDir/lua_5.3.6/lua53.lib"
+  };
   Sdl2 = @{
     Core = "$ThirdpartyDir/SDL2-2.0.22";
     Image = "$ThirdpartyDir/SDL2_image-2.8.10";
     Mixer = "$ThirdpartyDir/SDL2_mixer-2.6.0";
     Ttf = "$ThirdpartyDir/SDL2_ttf-2.0.15";
   };
-  #set(LUA_HOME "E:/code/Thirdparty/lua-5.3.5_win64_vc16_lib")
   LibsReleaseX64 = "$ThirdpartyDir/Libs/Release_x64";
   LibsDebugX64 = "$ThirdpartyDir/Libs/Debug_x64";
   Include = "$ThirdpartyDir/Include";
@@ -15,5 +18,4 @@ $SystemEnv = @{
 
 $output = ConvertTo-Json $SystemEnv
 
-# Write-Host $output
 return $output
