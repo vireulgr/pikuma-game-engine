@@ -6,6 +6,7 @@
 struct ResourceBase;
 
 class ResourceManager {
+  public:
   ResourceBase * getResource(std::string id);
 };
 

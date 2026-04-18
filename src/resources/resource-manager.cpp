@@ -21,7 +21,7 @@ ResourceEntry const PATHS_TABLE[] = {
 
 ResourceBase * ResourceManager::getResource(std::string id) {
   auto const endIter = std::cend(PATHS_TABLE);
-  auto res = std::find(std::cbegin(PATHS_TABLE), endIter, [&id](ResourceEntry const & item) {return item.id == id;});
+  auto res = std::find_if(std::cbegin(PATHS_TABLE), endIter, [&id](ResourceEntry const & item) {return item.id == id;});
   if (res == endIter) {
     std::cerr << "Resource with id " << id << " not found" << std::endl;
   }

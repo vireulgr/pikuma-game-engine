@@ -1,7 +1,9 @@
 #include "game.hpp"
 #include <iostream>
+#include <memory>
 #include "SDL.h"
-#include "resources/image-resource.hpp"
+#include "resources/resource-manager.hpp"
+#include "objects/simple-object.hpp"
 
 Game::Game(int argc, char * argv[]) {
   if (argc >= 1) {
@@ -46,23 +48,16 @@ bool Game::initialize() {
     std::cerr << "error creating renderer" << std::endl;
     return false;
   }
+  ResourceManager * resMan = new ResourceManager();
 
-  ImageResource * tankImage = new ImageResource("./assets/images/tank-tiger-right.png");
-  if (tankImage == nullptr) {
-    std::cerr << "tank image is null" << std::endl;
-    return false;
-  }
-  if (!tankImage->load()) {
-    return false;
-  }
-  tigerTankTxt = tankImage->getTexture(m_renderer);
-  delete tankImage;
+  std::shared_ptr<TankObject> tankObject = std::make_shared<TankObject>();
+  m_objects.push_back(tankObject);
 
-  if (NULL == tigerTankTxt) {
-    std::cerr << "Error loading tank texture" << std::endl;
-    std::cerr << SDL_GetError() << std::endl;
-    return false;
+  for (auto ptr : m_objects) {
+    ptr->initialize(resMan, m_renderer);
   }
+
+  delete resMan;
 
   if (!fakeFullscreen) {
     SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
@@ -100,7 +95,11 @@ void Game::processEvents() {
   }
 }
 
-void Game::update() { }
+void Game::update() {
+  for (auto obj : m_objects) {
+    obj->update();
+  }
+}
 
 void Game::render() {
   SDL_SetRenderDrawColor(m_renderer, 31, 31, 31, 255);
@@ -110,9 +109,9 @@ void Game::render() {
   //SDL_Rect rect = { 380, 280, 40, 40};
   //SDL_RenderFillRect(m_renderer, &rect);
 
-
-  SDL_Rect destRect = { 20, 20, 32, 32 };
-  SDL_RenderCopy(m_renderer, tigerTankTxt, /*srcRect*/NULL, &destRect);
+  for (auto obj : m_objects) {
+    obj->render(m_renderer);
+  }
 
   SDL_RenderPresent(m_renderer);
 }
