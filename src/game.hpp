@@ -20,9 +20,9 @@ public:
   int windowHeight;
 
 protected:
-  bool fakeFullscreen;
   int color;
   bool isRunning;
+  int millisecsPrevFrame;
 
   std::vector<std::shared_ptr<BaseObject>> m_objects;
 

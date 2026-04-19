@@ -2,15 +2,20 @@
 #include <iostream>
 #include <memory>
 #include "SDL.h"
+#include "SDL_timer.h"
 #include "resources/resource-manager.hpp"
 #include "objects/simple-object.hpp"
+
+#ifdef FIXED_FRAME_RATE
+int const FPS = 30;
+int const MILLISEC_PER_FRAME = 1000./FPS;
+#endif
 
 Game::Game(int argc, char * argv[]) {
   if (argc >= 1) {
     puts(argv[0]);
   }
-  // TODO
-  fakeFullscreen = false;
+
   windowWidth = 800;
   windowHeight = 600;
 }
@@ -24,12 +29,12 @@ bool Game::initialize() {
     return false;
   }
 
-  if (fakeFullscreen) {
+#ifdef FAKE_FULLSCREEN
     SDL_DisplayMode displayMode;
     SDL_GetCurrentDisplayMode(0, &displayMode);
     windowWidth = displayMode.w;
     windowHeight = displayMode.h;
-  }
+#endif
 
   m_window = SDL_CreateWindow(
       NULL,
@@ -44,7 +49,7 @@ bool Game::initialize() {
     return false;
   }
   m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-  if (!m_window) {
+  if (!m_renderer) {
     std::cerr << "error creating renderer" << std::endl;
     return false;
   }
@@ -59,15 +64,16 @@ bool Game::initialize() {
 
   delete resMan;
 
-  if (!fakeFullscreen) {
-    SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
-  }
+#ifndef FAKE_FULLSCREEN
+  SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
+#endif
 
   return true;
 }
 
 void Game::run() {
   isRunning = true;
+  millisecsPrevFrame = SDL_GetTicks();
   while (isRunning) {
     processEvents();
     update();
@@ -96,9 +102,19 @@ void Game::processEvents() {
 }
 
 void Game::update() {
-  for (auto obj : m_objects) {
-    obj->update();
+  double deltaTime = (SDL_GetTicks() - millisecsPrevFrame) / 1000.0;
+#ifdef FIXED_FRAME_RATE
+  unsigned int timeToWait = MILLISEC_PER_FRAME - (SDL_GetTicks() - millisecsPrevFrame);
+  if (timeToWait <= MILLISEC_PER_FRAME) {
+    SDL_Delay(timeToWait);
   }
+#endif
+
+  // std::cout << "dt: " << deltaTime << std::endl;
+  for (auto obj : m_objects) {
+    obj->update(deltaTime);
+  }
+  millisecsPrevFrame = SDL_GetTicks();
 }
 
 void Game::render() {

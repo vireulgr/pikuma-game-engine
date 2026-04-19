@@ -5,12 +5,9 @@
 ImageResource::ImageResource(std::string path)
   : ResourceBase(ResourceType::image, path)
   , m_surface(nullptr) 
-{
-  std::cout << "image resource ctor" << std::endl;
-}
+{ }
 
 bool ImageResource::load() {
-  std::cout << "image resource load" << std::endl; 
   SDL_Surface * tmpSurface = IMG_Load(m_path.c_str());
   if (NULL == tmpSurface) {
     std::cerr << "error loading tank texture" << std::endl;
