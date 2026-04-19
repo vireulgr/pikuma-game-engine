@@ -13,6 +13,7 @@ target_sources(engine PRIVATE
   src/resources/font-resource.cpp
   src/resources/resource-manager.cpp
   src/objects/simple-object.cpp
+  src/logger/logger.cpp
 )
 
 target_compile_options(engine PRIVATE -Wall -Wextra)
