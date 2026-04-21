@@ -2,9 +2,11 @@
 #include "image-resource.hpp"
 #include "sound-resource.hpp"
 #include "font-resource.hpp"
+#include "../logger/logger.hpp"
 #include <iostream>
 #include <algorithm>
 #include <iterator>
+#include <cstdio>
 
 struct ResourceEntry {
   ResourceType type;
@@ -32,15 +34,20 @@ ResourceBase * ResourceManager::getResource(std::string id) {
     };
     break;
     case ResourceType::sound: {
-       tmp = new SoundResource(res->path);
+      tmp = new SoundResource(res->path);
     };
     break;
     case ResourceType::font: {
-       tmp = new FontResource(res->path);
+      tmp = new FontResource(res->path);
     };
     break;
     default: {
-      std::cerr << "Unknown resource type: " << res->type << std::endl;
+      const size_t bufSize = 100;
+      char buf[bufSize] = {};
+      errno_t err = sprintf_s(buf, bufSize, "Unknown resource type: %d", res->type);
+      if (err == 0) {
+        Logger::Error(buf);
+      }
     }
   }
   return tmp;

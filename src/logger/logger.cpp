@@ -1,6 +1,9 @@
 #include "logger.hpp"
 #include <iostream>
-#include <time.h>
+#include <ctime>
+
+std::vector<LogEntry> Logger::engineLog;
+// static char TIME_BUF[60] = {}; // not thread-safe
 
 // Source - https://stackoverflow.com/a/54062826
 // Posted by Mehdi Mohammadpour, modified by community. See post 'Timeline' for change history
@@ -9,6 +12,8 @@
 char const RESET[] = "\033[0m";
 char const RED_TEXT[] = "\x1B[31m";
 char const GREEN_TEXT[] = "\x1B[32m";
+char const YELLOW_TEXT[] = "\x1B[33m";
+char const BRIGHT_RED_TEXT[] = "\x1B[91m";
 
 // Name            FG  BG
 // Black           30  40
@@ -28,24 +33,59 @@ char const GREEN_TEXT[] = "\x1B[32m";
 // Bright Cyan     96  106
 // Bright White    97  107
 
-void Logger::Log(std::string const & a) {
+std::unique_ptr<char[]> makeTimeString() {
   time_t myTime;
   time(&myTime);
   struct tm timeStruct;
-  int const bufSize = 40;
-  char buf[bufSize] = {};
-  gmtime_s(&timeStruct, &myTime);
-  strftime(buf, bufSize, "%d.%m.%y %H:%M:%S ", &timeStruct);
-  std::cout << GREEN_TEXT << "[I] " << buf << a << RESET << std::endl;
+  localtime_s(&timeStruct, &myTime);
+
+  int const bufSize = 24;
+  std::unique_ptr<char[]> buf = std::make_unique<char[]>(bufSize);
+  strftime(buf.get(), bufSize, "%d.%m.%y %H:%M:%S ", &timeStruct);
+
+  return buf;
+}
+
+void Logger::Log(std::string const & a) {
+  std::unique_ptr<char[]> buf = makeTimeString();
+
+  LogEntry entry;
+  entry.message = std::string("[I] ") + std::string(buf.get()) + a;
+  entry.type = EntryType::Info;
+  engineLog.push_back(entry);
+
+  std::cout << GREEN_TEXT << entry.message << RESET << std::endl;
 }
 
 void Logger::Error(std::string const & a) {
-  time_t myTime;
-  time(&myTime);
-  struct tm timeStruct;
-  int const bufSize = 40;
-  char buf[bufSize] = {};
-  gmtime_s(&timeStruct, &myTime);
-  strftime(buf, bufSize, "%d.%m.%y %H:%M:%S ", &timeStruct);
-  std::cerr << RED_TEXT << "[E] " << buf << a << RESET << std::endl;
+  std::unique_ptr<char[]> buf = makeTimeString();
+
+  LogEntry entry;
+  entry.message = std::string("[E] ") + std::string(buf.get()) + a;
+  entry.type = EntryType::Error;
+  engineLog.push_back(entry);
+
+  std::cerr << RED_TEXT << entry.message << RESET << std::endl;
+}
+
+void Logger::Warning(std::string const & a) {
+  std::unique_ptr<char[]> buf = makeTimeString();
+
+  LogEntry entry;
+  entry.message = std::string("[W] ") + std::string(buf.get()) + a;
+  entry.type = EntryType::Warning;
+  engineLog.push_back(entry);
+
+  std::cout << YELLOW_TEXT << entry.message << RESET << std::endl;
+}
+
+void Logger::Fatal(std::string const &a) {
+  std::unique_ptr<char[]> buf = makeTimeString();
+
+  LogEntry entry;
+  entry.message = std::string("[F] ") + std::string(buf.get()) + a;
+  entry.type = EntryType::Fatal;
+  engineLog.push_back(entry);
+
+  std::cerr << BRIGHT_RED_TEXT << entry.message << RESET << std::endl;
 }

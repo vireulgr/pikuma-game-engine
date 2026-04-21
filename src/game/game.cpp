@@ -3,6 +3,7 @@
 #include <memory>
 #include "SDL.h"
 #include "SDL_timer.h"
+#include "../logger/logger.hpp"
 #include "../resources/resource-manager.hpp"
 #include "../objects/simple-object.hpp"
 
