@@ -3,8 +3,8 @@
 #include <memory>
 #include "SDL.h"
 #include "SDL_timer.h"
-#include "resources/resource-manager.hpp"
-#include "objects/simple-object.hpp"
+#include "../resources/resource-manager.hpp"
+#include "../objects/simple-object.hpp"
 
 #ifdef FIXED_FRAME_RATE
 int const FPS = 30;
@@ -25,7 +25,7 @@ Game::~Game() {}
 bool Game::initialize() {
 
   if (SDL_Init(SDL_INIT_EVERYTHING)) {
-    std::cerr << "error initializing SDL" << std::endl;
+    Logger::Error("error initializing SDL");
     return false;
   }
 
@@ -45,12 +45,12 @@ bool Game::initialize() {
       SDL_WINDOW_BORDERLESS);
 
   if (!m_window) {
-    std::cerr << "error creating window" << std::endl;
+    Logger::Error("error creating window");
     return false;
   }
   m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   if (!m_renderer) {
-    std::cerr << "error creating renderer" << std::endl;
+    Logger::Error("error creating renderer");
     return false;
   }
   ResourceManager * resMan = new ResourceManager();
