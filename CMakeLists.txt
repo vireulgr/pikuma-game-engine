@@ -14,6 +14,7 @@ target_sources(engine PRIVATE
   src/resources/resource-manager.cpp
   src/objects/simple-object.cpp
   src/logger/logger.cpp
+  src/ECS/ECS.cpp
 )
 
 target_compile_options(engine PRIVATE -Wall -Wextra)
