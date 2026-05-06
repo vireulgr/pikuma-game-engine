@@ -2,6 +2,9 @@
 #define __ECS_HPP__
 #include <bitset>
 #include <vector>
+#include <unordered_map>
+#include <typeindex>
+#include <set>
 
 unsigned int const MAX_COMPONENTS = 32;
 
@@ -15,8 +18,7 @@ struct BaseComponent {
 template <typename TComponent>
 class Component: public BaseComponent {
   static int GetID() {
-    static int myId = nextId;
-    nextId += 1;
+    static int myId = nextId += 1;
     return myId;
   }
 };
@@ -26,7 +28,7 @@ class Entity {
   public:
   Entity(int id): id(id) {}
   Entity(Entity const & other) = default;
-  int GetId() const { return id; }
+  int getId() const { return id; }
   Entity & operator=(Entity const & other) = default;
 
   bool operator==(Entity const & other) const {
@@ -35,14 +37,18 @@ class Entity {
     //}
     return id == other.id;
   }
+
+  bool operator<(Entity const & other) const {
+    return id < other.id;
+  }
 };
 
 class System {
   Signature componentSignature;
   std::vector<Entity> entities;
   public:
-  void AddEntityToSystem(Entity);
-  void RemoveEntityFromSystem(Entity);
+  void AddEntity(Entity);
+  void RemoveEntity(Entity);
   std::vector<Entity> GetSystemEntities() const;
   Signature GetComponentSignature() const;
 
@@ -52,7 +58,7 @@ class System {
 
 template<typename TComponent>
 void System::RequireComponent() {
-  int componentId = Component<TComponent>::GetID();
+  auto const componentId = Component<TComponent>::GetID();
   componentSignature.set(componentId);
 }
 
@@ -82,9 +88,70 @@ class Pool: public IPool {
   T& operator[](unsigned int idx) { return data[idx]; }
 };
 
-class Registy {
-  int numEntities;
+class Registry {
+  unsigned int numEntities = 0;
+  // each pool object contains
   std::vector<IPool *> componentPools;
+  // entity id => signature
+  std::vector<Signature> entityComponentSigntures;
+  std::unordered_map<std::type_index, System *> systems;
+
+  std::set<Entity> entitiesToBeAdded;
+  std::set<Entity> entitiesToBeKilled;
+
+
+public:
+  Registry() = default;
+
+  void update();
+
+  Entity createEntity();
+  void killEntity(Entity);
+
+  void addEntityToSystem(Entity);
+
+  template <typename T, typename ...Rest>
+  void addComponent(Entity entity, Rest && ...args);
+
+  template <typename T>
+  void removeComponent(Entity entity);
+
+  template <typename T>
+  bool hasComponent(Entity entity) const;
+
+  template <typename T>
+  T& getComponent(Entity entity) const;
+
+  // AddSystem
+  // removeSystem
+  // hasSystem
+  // getSystem
 };
+
+template<typename T, typename ...Rest>
+void Registry::addComponent(Entity entity, Rest && ...args) {
+  auto const componentId = Component<T>::GetID();
+  auto const entityId = entity.getId();
+
+  if (componentId >= componentPools.size()) {
+    componentPools.resize(componentId + 1, nullptr);
+  }
+
+  if (nullptr == componentPools[componentId]) {
+    Pool<T>* componentPool = new Pool<T>();
+    componentPools[componentId] = componentPool;
+  }
+
+  Pool<T>* curPool = static_cast<Pool<T>*>(componentPools[componentId]);
+
+  if (entityId >= curPool->getSize()) {
+    curPool->resize(numEntities);
+  }
+
+  T component = T(std::forward<Rest>(args)...);
+  curPool->set(entityId, component);
+
+  entityComponentSigntures[entityId].set(componentId);
+}
 
 #endif
