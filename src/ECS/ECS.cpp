@@ -4,6 +4,7 @@
 #include <typeindex>
 #include "../logger/logger.hpp"
 
+// Course: ECS design: excercise: System functions
 void System::AddEntity(Entity e) {
   entities.push_back(e);
 }
@@ -22,13 +23,14 @@ Signature System::GetComponentSignature() const {
   return componentSignature;
 }
 
-void Registry::killEntity(Entity) {
+void Registry::killEntity(Entity e) {
+  entitiesToBeRemoved.insert(e);
 }
 
 Entity Registry::createEntity() {
   unsigned int entityId = numEntities += 1;
-  if (entityId >= entityComponentSigntures.size()) {
-    entityComponentSigntures.resize(entityId + 1);
+  if (entityId >= entityComponentSignatures.size()) {
+    entityComponentSignatures.resize(entityId + 1);
   }
 
   Entity entity((entityId));
@@ -39,9 +41,13 @@ Entity Registry::createEntity() {
 }
 
 void Registry::addEntityToSystem(Entity) {
+  // Work in progress
 }
 
 void Registry::update() {
   // add entites
+  entitiesToBeAdded.clear();
   // remove entities
+  entitiesToBeRemoved.clear();
+
 }

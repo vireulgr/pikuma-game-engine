@@ -31,3 +31,27 @@ index 41ad0ce..f3ab18f 100644
    #define __PRFCHWINTRIN_H
     static __inline__ void __attribute__((__always_inline__, __nodebug__))
 ```
+
+ECS implementation
+1) Component Pool
+- Registry class
+- Pool of components
+- Two axes of components in pool (by component type and by component ID)
+2) Pool of components
+- Implementation as wrapper around std::vector
+3) Implementing the Pool class
+- coding Registry (only pool member and numEntities)
+- coding Pool
+- coding IPool
+4) Registry systems and entity signatures
+- in registry class a vector of signatures of entities
+- in registry class vector of systems
+- discuss registry class interface
+5) Entity creation and management
+- focus on add entity and add component and add component to system
+- vector of components to add and to remove
+- discuss Registry::CreateEntity method
+- coding Registry::CreateEntity method
+- coding Registry::Update method (WIP)
+- discuss Registry::addEntityToSystem method and add signature to class
+- discuss template<typename T> Registry::addComponent method 
