@@ -42,7 +42,7 @@ public:
   bool operator<(Entity const & other) const { return id < other.id; }
   bool operator>(Entity const & other) const { return id > other.id; }
 
-  int GetId() const { return id; }
+  int getId() const { return id; }
 };
 
 /**
@@ -120,6 +120,35 @@ public:
   void addEntityToSystem(Entity);
 
   void update();
+
+  template<typename T, typename ...CtorParams>
+    void addComponent(Entity, CtorParams&& ...args);
 };
 
+
+template<typename T, typename ...CtorParams>
+void Registry::addComponent(Entity entity, CtorParams&& ...args) {
+
+  const auto componentId = Component<T>::GetID();
+  const auto entityId = entity.getId();
+
+  if (componentPools.size() <= componentId) {
+    componentPools.resize(componentId + 1, nullptr);
+  }
+
+  auto componentTypePoolPtr = componentPools[componentId];
+  if (!componentTypePoolPtr) {
+    componentTypePoolPtr = new Pool<T>(entityId);
+  }
+
+  if (componentTypePoolPtr->Size() <= entityId) {
+    componentTypePoolPtr->Resize(numEntities); // numEntities must be imcremented in the moment of entity creation
+  }
+
+  T newComponent(std::forward<CtorParams>(args)...);
+
+  componentTypePoolPtr->set(entityId, newComponent);
+
+  entityComponentSignatures[entityId].set(componentId);
+}
 #endif

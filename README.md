@@ -55,3 +55,12 @@ ECS implementation
 - coding Registry::Update method (WIP)
 - discuss Registry::addEntityToSystem method and add signature to class
 - discuss template<typename T> Registry::addComponent method 
+6) Function templates to manage components
+- discuss this video context and process of adding an entity to system
+- discuss template <typename T>Registry::addComponent and its template nature
+- Registry::addComponent must accept parameters for component constructor (which may be of any number and types)
+- all component management methods must be templates
+- example of using component management methods
+- C++ template syntax details for declaring a variadic template class member
+7) Add component function
+- coding template <typename T>Registry::addComponent
