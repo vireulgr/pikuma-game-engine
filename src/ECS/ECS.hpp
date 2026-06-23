@@ -22,8 +22,7 @@ struct BaseComponent {
 template <typename TComponent>
 class Component: public BaseComponent {
   static int GetID() {
-    static int myId = nextId;
-    nextId += 1;
+    static int myId = nextId++;
     return myId;
   }
 };
@@ -121,11 +120,60 @@ public:
 
   void update();
 
+  // component management
+
   template<typename T, typename ...CtorParams>
     void addComponent(Entity, CtorParams&& ...args);
+
+  template<typename T>
+    void removeComponent(Entity entity); 
+
+  template<typename T>
+    bool hasComponent(Entity entity);
+
+  // system management
+
+  template<typename T, typename ...CtorParmas>
+    void addSystem(CtorParmas&& ...args);
+
+  template<typename T>
+    void removeSystem();
+
+  template<typename T>
+    bool hasSystem() const;
+
+  template<typename T>
+    T& GetSystem() const;
 };
 
+// Registry methods implementation
+/** */
+template<typename T>
+bool Registry::hasComponent(Entity entity) {
+  const auto entityId = entity.getId();
+  const auto componentId = Component<T>::GetID();
 
+  if (entityComponentSignatures.empty()) {
+    return false;
+  }
+  if ((entityComponentSignatures.size() - 1) < static_cast<size_t>(entityId)) {
+    return false;
+  }
+
+  return entityComponentSignatures[entityId].test(componentId);
+}
+
+/** */
+template<typename T>
+void Registry::removeComponent(Entity entity) {
+  const auto componentId = Component<T>::getId();
+  const auto entityId = entity.getId();
+
+  entityComponentSignatures[entityId].set(componentId, false);
+}
+
+
+/** */
 template<typename T, typename ...CtorParams>
 void Registry::addComponent(Entity entity, CtorParams&& ...args) {
 
@@ -151,4 +199,28 @@ void Registry::addComponent(Entity entity, CtorParams&& ...args) {
 
   entityComponentSignatures[entityId].set(componentId);
 }
+
+
+/** */
+template<typename T, typename ...CtorParmas>
+void Registry::addSystem(CtorParmas&& ...args) {
+}
+
+/** */
+template<typename T>
+void Registry::removeSystem() {
+}
+
+/** */
+template<typename T>
+bool Registry::hasSystem() const {
+  return true;
+}
+
+/** */
+template<typename T>
+T& Registry::GetSystem() const {
+  return T();
+}
+
 #endif

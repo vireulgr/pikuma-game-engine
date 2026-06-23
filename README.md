@@ -63,4 +63,12 @@ ECS implementation
 - example of using component management methods
 - C++ template syntax details for declaring a variadic template class member
 7) Add component function
-- coding template <typename T>Registry::addComponent
+- coding template \<typename T\>Registry::addComponent
+8)
+- coding template \<typename T\>Registry::addComponent
+9) Remembering to Define nextId
+- Initialize int BaseComponent::nextId in ECS.cpp file
+10) implementing System funcitons
+- overview of system management functions
+- system management functions must be templates
+- coding template function definitions

@@ -1,5 +1,4 @@
 #include "game.hpp"
-#include <iostream>
 #include <memory>
 #include "SDL.h"
 #include "SDL_timer.h"

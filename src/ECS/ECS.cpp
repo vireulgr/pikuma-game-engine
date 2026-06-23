@@ -1,8 +1,9 @@
 #include "ECS.hpp"
 #include <algorithm>
 #include <string>
-#include <typeindex>
 #include "../logger/logger.hpp"
+
+int BaseComponent::nextId = 0;
 
 // Course: ECS design: excercise: System functions
 void System::AddEntity(Entity e) {
