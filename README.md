@@ -72,3 +72,20 @@ ECS implementation
 - overview of system management functions
 - system management functions must be templates
 - coding template function definitions
+
+
+Creating entities & components
+1) Create our first Entity
+- Add Registry member to Game class
+- In Game::setup add two new entities
+- write Registry::update method
+- update Registry::createEntity to assure that new item with fit in data structures
+2) Smart pointers
+- raw pointers; resource allocation and freeing
+- smart pointers: unique_ptr; 
+- unique_ptr used when we want only one owner of an object
+- sharing of unique_ptr is not allowed
+- to create uniqu_ptr use std::make_unique function
+- once unique_ptr exits its scope, it automatic destroys underlying object calling its destructor
+- smart pointers: shared_ptr
+
