@@ -1,33 +1,31 @@
 #include "ECS.hpp"
+#include "../logger/logger.hpp"
 #include <algorithm>
 #include <string>
-#include "../logger/logger.hpp"
 
 int BaseComponent::nextId = 0;
 
-// Course: ECS design: excercise: System functions
-void System::AddEntity(Entity e) {
-  entities.push_back(e);
-}
+/** */
+void System::AddEntity(Entity e) { entities.push_back(e); }
 
+/** */
 void System::RemoveEntity(Entity e) {
-  std::vector<Entity>::iterator iter = 
-    std::remove_if(entities.begin(), entities.end(), [&e] (Entity entity) { return e == entity; });
+  std::vector<Entity>::iterator iter =
+      std::remove_if(entities.begin(), entities.end(),
+                     [&e](Entity entity) { return e == entity; });
   entities.erase(iter, entities.end());
 }
 
-std::vector<Entity> System::GetSystemEntities() const {
-  return entities;
-}
+/** */
+std::vector<Entity> System::GetSystemEntities() const { return entities; }
 
-Signature System::GetComponentSignature() const {
-  return componentSignature;
-}
+/** */
+Signature System::GetComponentSignature() const { return componentSignature; }
 
-void Registry::killEntity(Entity e) {
-  entitiesToBeRemoved.insert(e);
-}
+/** */
+void Registry::killEntity(Entity e) { entitiesToBeRemoved.insert(e); }
 
+/** */
 Entity Registry::createEntity() {
   unsigned int entityId = numEntities += 1;
   if (entityId >= entityComponentSignatures.size()) {
@@ -41,14 +39,32 @@ Entity Registry::createEntity() {
   return entity;
 }
 
-void Registry::addEntityToSystem(Entity) {
-  // Work in progress
+/** */
+void Registry::addEntityToSystem(Entity entity) {
+  int const entityId = entity.getId();
+
+  Signature const &entityComponentSignature =
+      entityComponentSignatures[entityId];
+
+  for (auto [key, system] : systems) {
+    Signature const &systemSignature = system->GetComponentSignature();
+    if ((systemSignature & entityComponentSignature) == systemSignature) {
+      system->AddEntity(entity);
+    }
+  }
 }
 
+/** */
 void Registry::update() {
   // add entites
+  for (auto entity : entitiesToBeAdded) {
+    addEntityToSystem(entity);
+  }
   entitiesToBeAdded.clear();
-  // remove entities
-  entitiesToBeRemoved.clear();
 
+  // remove entities TO BE DONE
+  // for (auto entity : entitiesToBeRemoved) {
+  //   removeEntity(entity);
+  // }
+  entitiesToBeRemoved.clear();
 }

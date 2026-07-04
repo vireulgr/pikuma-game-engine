@@ -3,6 +3,7 @@
 #include <bitset>
 #include <typeindex>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 #include <set>
 
@@ -143,7 +144,7 @@ public:
     bool hasSystem() const;
 
   template<typename T>
-    T& GetSystem() const;
+    T& getSystem() const;
 };
 
 // Registry methods implementation
@@ -190,7 +191,7 @@ void Registry::addComponent(Entity entity, CtorParams&& ...args) {
   }
 
   if (componentTypePoolPtr->Size() <= entityId) {
-    componentTypePoolPtr->Resize(numEntities); // numEntities must be imcremented in the moment of entity creation
+    componentTypePoolPtr->Resize(numEntities); // numEntities must be incremented in the moment of entity creation
   }
 
   T newComponent(std::forward<CtorParams>(args)...);
@@ -204,23 +205,31 @@ void Registry::addComponent(Entity entity, CtorParams&& ...args) {
 /** */
 template<typename T, typename ...CtorParmas>
 void Registry::addSystem(CtorParmas&& ...args) {
+  T* newSystem = new T(std::forward<CtorParmas>(args)...);
+  systems.insert(std::make_pair(std::type_index(typeid(T)), newSystem));
 }
 
 /** */
 template<typename T>
 void Registry::removeSystem() {
+  auto it = systems.find(std::type_index(typeid(T)));
+  systems.erase(it);
 }
 
 /** */
 template<typename T>
 bool Registry::hasSystem() const {
-  return true;
+  return systems.find(std::type_index(typeid(T))) != systems.end();
 }
 
 /** */
 template<typename T>
-T& Registry::GetSystem() const {
-  return T();
+T& Registry::getSystem() const {
+  auto wasya = systems.find(std::type_index(typeid(T)));
+  if (wasya != systems.end()) {
+    return static_cast<T>(wasya->second);
+  }
+  return systems.at(std::type_index(typeid(T))); // will throw ????
 }
 
 #endif

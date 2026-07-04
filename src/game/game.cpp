@@ -1,10 +1,11 @@
 #include "game.hpp"
-#include <memory>
+//#include <memory>
 #include "SDL.h"
 #include "SDL_timer.h"
 #include "../logger/logger.hpp"
-#include "../resources/resource-manager.hpp"
-#include "../objects/simple-object.hpp"
+// #include "../resources/resource-manager.hpp"
+// #include "../objects/simple-object.hpp"
+#include "../ECS/ECS.hpp"
 
 #ifdef FIXED_FRAME_RATE
 int const FPS = 30;
@@ -18,6 +19,8 @@ Game::Game(int argc, char * argv[]) {
 
   windowWidth = 800;
   windowHeight = 600;
+
+  registry = new Registry();
 }
 
 Game::~Game() {}
@@ -53,16 +56,20 @@ bool Game::initialize() {
     Logger::Error("error creating renderer");
     return false;
   }
-  ResourceManager * resMan = new ResourceManager();
 
-  std::shared_ptr<TankObject> tankObject = std::make_shared<TankObject>();
-  m_objects.push_back(tankObject);
 
-  for (auto ptr : m_objects) {
-    ptr->initialize(resMan, m_renderer);
-  }
+  Entity aTank = registry->createEntity();
+  Entity aTruck = registry->createEntity();
+  // ResourceManager * resMan = new ResourceManager();
 
-  delete resMan;
+  //std::shared_ptr<TankObject> tankObject = std::make_shared<TankObject>();
+  //m_objects.push_back(tankObject);
+
+  //for (auto ptr : m_objects) {
+  //  ptr->initialize(resMan, m_renderer);
+  //}
+
+  // delete resMan;
 
 #ifndef FAKE_FULLSCREEN
   SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN);
@@ -111,9 +118,9 @@ void Game::update() {
 #endif
 
   // std::cout << "dt: " << deltaTime << std::endl;
-  for (auto obj : m_objects) {
-    obj->update(deltaTime);
-  }
+  //for (auto obj : m_objects) {
+  //  obj->update(deltaTime);
+  //}
   millisecsPrevFrame = SDL_GetTicks();
 }
 
@@ -125,9 +132,9 @@ void Game::render() {
   //SDL_Rect rect = { 380, 280, 40, 40};
   //SDL_RenderFillRect(m_renderer, &rect);
 
-  for (auto obj : m_objects) {
-    obj->render(m_renderer);
-  }
+  //for (auto obj : m_objects) {
+  //  obj->render(m_renderer);
+  //}
 
   SDL_RenderPresent(m_renderer);
 }
