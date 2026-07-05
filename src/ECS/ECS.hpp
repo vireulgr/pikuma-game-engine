@@ -6,6 +6,7 @@
 #include <utility>
 #include <vector>
 #include <set>
+#include "../logger/logger.hpp"
 
 unsigned int const MAX_COMPONENTS = 32;
 
@@ -112,7 +113,13 @@ class Registry {
   std::set<Entity> entitiesToBeAdded;
   std::set<Entity> entitiesToBeRemoved;
 public:
-  Registry() = default;
+  Registry(): numEntities(0) {
+    Logger::Log("Registry ctor");
+  }
+
+  ~Registry() {
+    Logger::Log("Registry dtor");
+  }
 
   Entity createEntity();
   void killEntity(Entity);

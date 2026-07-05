@@ -20,7 +20,8 @@ Game::Game(int argc, char * argv[]) {
   windowWidth = 800;
   windowHeight = 600;
 
-  registry = new Registry();
+  //registry = new Registry();
+  registry = std::make_unique<Registry>();
 }
 
 Game::~Game() {}
@@ -57,7 +58,7 @@ bool Game::initialize() {
     return false;
   }
 
-
+  Logger::Log("Create entities");
   Entity aTank = registry->createEntity();
   Entity aTruck = registry->createEntity();
   // ResourceManager * resMan = new ResourceManager();

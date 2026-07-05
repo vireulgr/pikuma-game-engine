@@ -1,7 +1,6 @@
 #ifndef __GAME_H__
 #define __GAME_H__
-//#include <memory>
-//#include <vector>
+#include <memory>
 
 struct SDL_Window;
 struct SDL_Renderer;
@@ -25,9 +24,7 @@ protected:
   bool isRunning;
   int millisecsPrevFrame;
 
-  Registry * registry;
-
-  //std::vector<std::shared_ptr<BaseObject>> m_objects;
+  std::unique_ptr<Registry> registry;
 
   SDL_Window * m_window;
   SDL_Renderer * m_renderer;
