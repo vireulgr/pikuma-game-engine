@@ -1,5 +1,4 @@
 #include "ECS.hpp"
-#include "../logger/logger.hpp"
 #include <algorithm>
 #include <string>
 
@@ -36,13 +35,14 @@ Entity Registry::createEntity() {
   entity.registry = this;
   entitiesToBeAdded.insert(entity);
 
-  Logger::Log("Entity created with id " + std::to_string(entityId));
+  Logger::Log(std::string("Entity created with id ") + std::to_string(entityId));
   return entity;
 }
 
 /** */
 void Registry::addEntityToSystem(Entity entity) {
   int const entityId = entity.getId();
+  Logger::Log(std::string("Add enttiy to system") + std::to_string(entityId));
 
   Signature const &entityComponentSignature =
       entityComponentSignatures[entityId];

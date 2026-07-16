@@ -132,8 +132,15 @@ class Registry {
   std::set<Entity> entitiesToBeAdded;
   std::set<Entity> entitiesToBeRemoved;
 public:
-  Registry() = default;
-  ~Registry() = default;
+  // Registry() = default;
+  // ~Registry() = default;
+  Registry(): numEntities(0) {
+    Logger::Log("Registry ctor");
+  }
+
+  ~Registry() {
+    Logger::Log("Registry dtor");
+  }
 
   Entity createEntity();
   void killEntity(Entity);

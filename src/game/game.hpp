@@ -5,8 +5,7 @@
 
 struct SDL_Window;
 struct SDL_Renderer;
-struct SDL_Texture;
-class BaseObject;
+//class BaseObject;
 class Registry;
 
 class Game {

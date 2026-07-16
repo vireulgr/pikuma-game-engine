@@ -1,9 +1,6 @@
 #include "game/game.hpp"
-// #include <cstdlib>
-// #include "logger/logger.hpp"
 
 int main(int argc, char * argv []) {
-  // system("dir");
   Game game(argc, argv);
   if (!game.initialize()) {
     return 0;

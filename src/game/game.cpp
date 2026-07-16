@@ -8,7 +8,7 @@
 #include "../ECS/ECS.hpp"
 #include "../Components/TransformComponent.hpp"
 #include "../Components/RigidBodyComponent.hpp"
-//#include "glm/glm.hpp"
+
 #include <memory>
 
 #ifdef FIXED_FRAME_RATE
@@ -61,10 +61,8 @@ bool Game::initialize() {
     return false;
   }
 
-
+  Logger::Log("Create entities");
   Entity aTank = registry->createEntity();
-  // registry->addComponent<TransformComponent>(aTank, glm::vec2(10.0, 30.0));
-  // registry->addComponent<RigidBodyComponent>(aTank, glm::vec2(50.0, 0.0));
   aTank.addComponent<TransformComponent>(glm::vec2(10.0, 30.0));
   aTank.addComponent<RigidBodyComponent>(glm::vec2(50.0, 0.0));
 
