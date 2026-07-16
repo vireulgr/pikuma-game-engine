@@ -63,9 +63,9 @@ ECS implementation
 - example of using component management methods
 - C++ template syntax details for declaring a variadic template class member
 7) Add component function
-- coding template \<typename T\>Registry::addComponent
+- coding template &lt;typename T&gt;Registry::addComponent
 8)
-- coding template \<typename T\>Registry::addComponent
+- coding template &lt;typename T&gt;Registry::addComponent
 9) Remembering to Define nextId
 - Initialize int BaseComponent::nextId in ECS.cpp file
 10) implementing System funcitons
@@ -88,4 +88,16 @@ Creating entities & components
 - to create uniqu_ptr use std::make_unique function
 - once unique_ptr exits its scope, it automatic destroys underlying object calling its destructor
 - smart pointers: shared_ptr
-
+3) Converting ECS code to smart pointers
+- replacing raw pointers to Registry, System, Pool&lt;T&gt; and IPool to smart pointers 
+4) SDL raw pointers
+- SDL pointers are actually pointers to opaque data structures. So we don't know how to deal with them
+6) Adding our first component
+- coding call to Registry::addComponent for TransformComponent and RigidBodyComponent
+- add RigidBodyComponent
+8) excercise: entity class managing components
+- add component by calling method on entity entity;
+9) Entity class manageing components
+- coding component managing methods in Entity class
+10) A warning about cyclic dependencies
+- discuss tangled project relations

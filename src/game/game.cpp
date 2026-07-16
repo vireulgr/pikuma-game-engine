@@ -6,6 +6,10 @@
 // #include "../resources/resource-manager.hpp"
 // #include "../objects/simple-object.hpp"
 #include "../ECS/ECS.hpp"
+#include "../Components/TransformComponent.hpp"
+#include "../Components/RigidBodyComponent.hpp"
+//#include "glm/glm.hpp"
+#include <memory>
 
 #ifdef FIXED_FRAME_RATE
 int const FPS = 30;
@@ -20,7 +24,7 @@ Game::Game(int argc, char * argv[]) {
   windowWidth = 800;
   windowHeight = 600;
 
-  registry = new Registry();
+  registry = std::make_unique<Registry>();
 }
 
 Game::~Game() {}
@@ -59,7 +63,13 @@ bool Game::initialize() {
 
 
   Entity aTank = registry->createEntity();
-  Entity aTruck = registry->createEntity();
+  // registry->addComponent<TransformComponent>(aTank, glm::vec2(10.0, 30.0));
+  // registry->addComponent<RigidBodyComponent>(aTank, glm::vec2(50.0, 0.0));
+  aTank.addComponent<TransformComponent>(glm::vec2(10.0, 30.0));
+  aTank.addComponent<RigidBodyComponent>(glm::vec2(50.0, 0.0));
+
+
+  aTank.removeComponent<RigidBodyComponent>();
   // ResourceManager * resMan = new ResourceManager();
 
   //std::shared_ptr<TankObject> tankObject = std::make_shared<TankObject>();
@@ -109,7 +119,7 @@ void Game::processEvents() {
 }
 
 void Game::update() {
-  double deltaTime = (SDL_GetTicks() - millisecsPrevFrame) / 1000.0;
+  //double deltaTime = (SDL_GetTicks() - millisecsPrevFrame) / 1000.0;
 #ifdef FIXED_FRAME_RATE
   unsigned int timeToWait = MILLISEC_PER_FRAME - (SDL_GetTicks() - millisecsPrevFrame);
   if (timeToWait <= MILLISEC_PER_FRAME) {

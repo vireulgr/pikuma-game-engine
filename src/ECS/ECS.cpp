@@ -27,12 +27,13 @@ void Registry::killEntity(Entity e) { entitiesToBeRemoved.insert(e); }
 
 /** */
 Entity Registry::createEntity() {
-  unsigned int entityId = numEntities += 1;
+  unsigned int entityId = numEntities++;
   if (entityId >= entityComponentSignatures.size()) {
     entityComponentSignatures.resize(entityId + 1);
   }
 
   Entity entity((entityId));
+  entity.registry = this;
   entitiesToBeAdded.insert(entity);
 
   Logger::Log("Entity created with id " + std::to_string(entityId));
