@@ -1,13 +1,21 @@
 #include "game.hpp"
 //#include <memory>
+// DEBVUG
+#include <iostream>
+// end of DEBVUG
 #include "SDL.h"
 #include "SDL_timer.h"
 #include "../logger/logger.hpp"
 // #include "../resources/resource-manager.hpp"
 // #include "../objects/simple-object.hpp"
 #include "../ECS/ECS.hpp"
+
 #include "../Components/TransformComponent.hpp"
 #include "../Components/RigidBodyComponent.hpp"
+#include "../Components/SpriteComponent.hpp"
+
+#include "../Systems/MovementSystem.hpp"
+#include "../Systems/RenderSystem.hpp"
 
 #include <memory>
 
@@ -61,13 +69,18 @@ bool Game::initialize() {
     return false;
   }
 
+
+  Logger::Log("Create systems");
+  // add systems
+  registry->addSystem<MovementSystem>();
+  registry->addSystem<RenderSystem>(m_renderer);
+
   Logger::Log("Create entities");
   Entity aTank = registry->createEntity();
-  aTank.addComponent<TransformComponent>(glm::vec2(10.0, 30.0));
-  aTank.addComponent<RigidBodyComponent>(glm::vec2(50.0, 0.0));
+  aTank.addComponent<SpriteComponent>(10, 10);
+  aTank.addComponent<TransformComponent>(glm::vec2(30.0, 30.0));
+  aTank.addComponent<RigidBodyComponent>(glm::vec2(10.0, 10.0));
 
-
-  aTank.removeComponent<RigidBodyComponent>();
   // ResourceManager * resMan = new ResourceManager();
 
   //std::shared_ptr<TankObject> tankObject = std::make_shared<TankObject>();
@@ -117,19 +130,25 @@ void Game::processEvents() {
 }
 
 void Game::update() {
-  //double deltaTime = (SDL_GetTicks() - millisecsPrevFrame) / 1000.0;
+  double deltaTime = (SDL_GetTicks() - millisecsPrevFrame) / 1000.0;
 #ifdef FIXED_FRAME_RATE
   unsigned int timeToWait = MILLISEC_PER_FRAME - (SDL_GetTicks() - millisecsPrevFrame);
   if (timeToWait <= MILLISEC_PER_FRAME) {
     SDL_Delay(timeToWait);
   }
 #endif
-
-  // std::cout << "dt: " << deltaTime << std::endl;
+  std::cout << "dt: " << deltaTime << std::endl;
   //for (auto obj : m_objects) {
   //  obj->update(deltaTime);
   //}
   millisecsPrevFrame = SDL_GetTicks();
+
+  // update systems
+  registry->getSystem<MovementSystem>().update(deltaTime);
+
+  // update registry (add/remove entities)
+  // MUST BE AT THE END!
+  registry->update();
 }
 
 void Game::render() {
@@ -143,6 +162,7 @@ void Game::render() {
   //for (auto obj : m_objects) {
   //  obj->render(m_renderer);
   //}
+  registry->getSystem<RenderSystem>().render();
 
   SDL_RenderPresent(m_renderer);
 }

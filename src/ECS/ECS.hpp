@@ -52,7 +52,7 @@ public:
   int getId() const { return id; }
 
   template <typename Component, typename ...CtorArgs>
-    void addComponent(CtorArgs ...args);
+    void addComponent(CtorArgs&& ...args);
 
   template <typename Component>
     void removeComponent();
@@ -151,8 +151,8 @@ public:
 
   // component management
 
-  template<typename T, typename ...CtorParams>
-    void addComponent(Entity, CtorParams&& ...args);
+  template<typename T, typename ...CtorArgs>
+    void addComponent(Entity, CtorArgs&& ...args);
 
   template<typename T>
     void removeComponent(Entity entity); 
@@ -165,8 +165,8 @@ public:
 
   // system management
 
-  template<typename T, typename ...CtorParmas>
-    void addSystem(CtorParmas&& ...args);
+  template<typename T, typename ...CtorArgs>
+    void addSystem(CtorArgs&& ...args);
 
   template<typename T>
     void removeSystem();
@@ -216,12 +216,12 @@ T& Registry::getComponent(Entity entity) const {
 }
 
 /** */
-template<typename T, typename ...CtorParams>
-void Registry::addComponent(Entity entity, CtorParams&& ...args) {
+template<typename T, typename ...CtorArgs>
+void Registry::addComponent(Entity entity, CtorArgs&& ...args) {
 
   const auto componentId = Component<T>::getId();
   const auto entityId = entity.getId();
-  Logger::Log("add component id " + std::to_string(componentId) + " to entity id " + std::to_string(entityId));
+  Logger::Log("Add component id " + std::to_string(componentId) + " to entity id " + std::to_string(entityId));
 
   if (componentPools.size() <= static_cast<size_t>(componentId)) {
     componentPools.resize(componentId + 1, nullptr);
@@ -238,7 +238,7 @@ void Registry::addComponent(Entity entity, CtorParams&& ...args) {
     componentTypePoolPtr->resize(numEntities); // numEntities must be incremented in the moment of entity creation
   }
 
-  T newComponent(std::forward<CtorParams>(args)...);
+  T newComponent(std::forward<CtorArgs>(args)...);
 
   componentTypePoolPtr->set(entityId, newComponent);
 
@@ -247,10 +247,10 @@ void Registry::addComponent(Entity entity, CtorParams&& ...args) {
 
 
 /** */
-template<typename T, typename ...CtorParmas>
-void Registry::addSystem(CtorParmas&& ...args) {
-  std::shared_ptr<T> newSystem = std::make_shared<T>(std::forward<CtorParmas>(args)...);
-  //T* newSystem = new T(std::forward<CtorParmas>(args)...);
+template<typename T, typename ...CtorArgs>
+void Registry::addSystem(CtorArgs&& ...args) {
+  std::shared_ptr<T> newSystem = std::make_shared<T>(std::forward<CtorArgs>(args)...);
+  //T* newSystem = new T(std::forward<CtorArgs>(args)...);
   systems.insert(std::make_pair(std::type_index(typeid(T)), newSystem));
 }
 
@@ -270,18 +270,22 @@ bool Registry::hasSystem() const {
 /** */
 template<typename T>
 T& Registry::getSystem() const {
-  auto wasya = systems.find(std::type_index(typeid(T)));
-  if (wasya != systems.end()) {
-    return static_cast<T>(wasya->second);
-  }
-  return systems.at(std::type_index(typeid(T))); // will throw ????
+  auto it = systems.find(std::type_index(typeid(T)));
+  //if (it != systems.end()) {
+    return *(std::static_pointer_cast<T>(it->second));
+  //}
+  //else { // never gonna happend
+  //  Logger::Error("requested system is not found!");
+  //  return T();
+  //}
+  //return systems.at(std::type_index(typeid(T))); // will throw ????
 }
 
 // 
 // Entity methods implementation
 //
 template <typename T, typename ...CtorArgs>
-void Entity::addComponent(CtorArgs ...args) {
+void Entity::addComponent(CtorArgs&& ...args) {
   registry->addComponent<T>(*this, std::forward<CtorArgs>(args)...);
 }
 

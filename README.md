@@ -1,6 +1,6 @@
 ### Study project of 2D game engine
 
-Based on course from pikuma.com
+Based on course "2D Game Engine with C++ and Lua" from pikuma.com
 
 Depends on 
 - lua 5.3.5   [5.4.8](https://sourceforge.net/projects/luabinaries/files/5.4.8/Windows%20Libraries/Dynamic/lua-5.4.8_Win64_dllw6_lib.zip/download)   static lib bulid with msvc 15 x64
@@ -73,7 +73,6 @@ ECS implementation
 - system management functions must be templates
 - coding template function definitions
 
-
 Creating entities & components
 1) Create our first Entity
 - Add Registry member to Game class
@@ -82,12 +81,17 @@ Creating entities & components
 - update Registry::createEntity to assure that new item with fit in data structures
 2) Smart pointers
 - raw pointers; resource allocation and freeing
-- smart pointers: unique_ptr; 
+- smart pointers: unique_ptr
 - unique_ptr used when we want only one owner of an object
 - sharing of unique_ptr is not allowed
-- to create uniqu_ptr use std::make_unique function
-- once unique_ptr exits its scope, it automatic destroys underlying object calling its destructor
+- to create unique_ptr use std::make_unique function
+- once unique_ptr exits its scope, it automatically destroys underlying object calling its destructor
 - smart pointers: shared_ptr
+- to create shared_ptr use std::make_shared function
+- shared_ptr allows sharing, allows several owners
+- shared_ptr keeps count of its owners (users)
+- once reference counter reaches 0, underlying object is destroyed by calling its destructor
+- enemy entities will be unique_ptrs
 3) Converting ECS code to smart pointers
 - replacing raw pointers to Registry, System, Pool&lt;T&gt; and IPool to smart pointers 
 4) SDL raw pointers
@@ -101,3 +105,17 @@ Creating entities & components
 - coding component managing methods in Entity class
 10) A warning about cyclic dependencies
 - discuss tangled project relations
+
+Creating systems
+1) Movement system
+- changes in MovementSystem::update
+    * add calls to require components
+    * add changing position based on velocity
+- add system with registry -> addSystem
+- update system and registy in Game::update method
+- remove deletion of RigidBodyComponent from tank entity
+2) Movement System and Delta time
+- add dt parameter to MovementSystem::update
+- use mentioned parameter to multiply velocity before add result to transform component
+- pass delta time from Game::update to movement system update call
+3) Render system

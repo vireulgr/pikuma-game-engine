@@ -42,7 +42,7 @@ Entity Registry::createEntity() {
 /** */
 void Registry::addEntityToSystem(Entity entity) {
   int const entityId = entity.getId();
-  Logger::Log(std::string("Add enttiy to system") + std::to_string(entityId));
+  Logger::Log(std::string("Add enttiy to system ") + std::to_string(entityId));
 
   Signature const &entityComponentSignature =
       entityComponentSignatures[entityId];
