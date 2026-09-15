@@ -1,11 +1,10 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 #include <memory>
-//#include <vector>
+#include "../AssetStore/AssetStore.hpp"
 
 struct SDL_Window;
 struct SDL_Renderer;
-//class BaseObject;
 class Registry;
 
 class Game {
@@ -25,8 +24,7 @@ protected:
   int millisecsPrevFrame;
 
   std::unique_ptr<Registry> registry;
-
-  //std::vector<std::shared_ptr<BaseObject>> m_objects;
+  std::unique_ptr<AssetStore> assetStore;
 
   SDL_Window * m_window;
   SDL_Renderer * m_renderer;

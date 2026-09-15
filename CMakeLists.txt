@@ -6,6 +6,7 @@ add_executable(engine)
 
 target_sources(engine PRIVATE
   src/main.cpp
+  src/AssetStore/AssetStore.cpp
   src/game/game.cpp
   src/resources/resource.cpp
   src/resources/sound-resource.cpp

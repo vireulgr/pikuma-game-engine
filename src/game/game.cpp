@@ -33,6 +33,7 @@ Game::Game(int argc, char * argv[]) {
   windowHeight = 600;
 
   registry = std::make_unique<Registry>();
+  assetStore = std::make_unique<AssetStore>();
 }
 
 Game::~Game() {}
@@ -69,6 +70,11 @@ bool Game::initialize() {
     return false;
   }
 
+  Logger::Log("Load assets");
+  // add assets to the asset store
+  assetStore->addTexture(m_renderer, "tank-image", "./assets/images/tank-panther-right.png");
+  assetStore->addTexture(m_renderer, "truck-image", "./assets/images/truck-ford-right.png");
+
 
   Logger::Log("Create systems");
   // add systems
@@ -77,7 +83,7 @@ bool Game::initialize() {
 
   Logger::Log("Create entities");
   Entity aTank = registry->createEntity();
-  aTank.addComponent<SpriteComponent>(10, 10);
+  aTank.addComponent<SpriteComponent>("truck-image", 10, 10);
   aTank.addComponent<TransformComponent>(glm::vec2(30.0, 30.0));
   aTank.addComponent<RigidBodyComponent>(glm::vec2(10.0, 10.0));
 

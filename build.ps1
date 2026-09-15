@@ -43,7 +43,7 @@ if ($sysEnv.Lua.Keys -Contains 'dllPath') {
 ################################################################################
 if ($run) {
   Copy-Item -Path $dllsToCopy .\build\ -ErrorAction SilentlyContinue
-  ./build/engine.exe
+  Start-Process -FilePath "./build/engine.exe"
   Exit 0
 }
 
